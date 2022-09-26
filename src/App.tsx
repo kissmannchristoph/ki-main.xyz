@@ -1,17 +1,35 @@
+import { useState } from "react";
 import "./styles.css";
+
+interface Service {
+  service: string;
+  name: string;
+}
+
+function getServiceUrl(service: string) {
+  return "https://" + service + ".ki-main.xyz";
+}
+
+const IFrame = ({
+  service,
+  name
+}: Service) => {
+  return <div style={{
+    display: "flex",
+    flexFlow: "column"
+  }}>
+    <p>{name}</p>
+    <iframe src={service} width="100%" height="100%" style={{minHeight: "500px"}} />
+  </div>
+}
 
 const ServiceButton = ({
   service,
-  name
-}: {
-  service: string;
-  name: string;
-}) => {
-  function getServiceUrl() {
-    return "https://" + service + ".ki-main.xyz";
-  }
+  name,
+  onClick
+}: {service: string, name: string, onClick: any}) => {
   function clickService(event: any) {
-    console.log(getServiceUrl());
+    onClick({service, name});
   }
 
   return (
@@ -30,12 +48,14 @@ const ServiceButton = ({
     >
       {name}
       <br />
-      {getServiceUrl()}
+      {service}
     </div>
   );
 };
 
 const Content = () => {
+  const [service, setService] = useState<Service | undefined>();
+
   return (
     <div
       style={{
@@ -46,6 +66,11 @@ const Content = () => {
         Servernetzwerk Intern
       </p>
       <div style={{ padding: "0 20px" }}>
+        {(service) ?
+        <IFrame service={service?.service} name={service?.name} /> : <></>
+      }
+      </div>
+      <div style={{ padding: "0 20px" }}>
         <hr />
         <p>Services</p>
         <div
@@ -54,8 +79,7 @@ const Content = () => {
             flexFlow: "column"
           }}
         >
-          <ServiceButton name="VSCode" service="code" />
-          <ServiceButton name="VSCode" service="code" />
+          <ServiceButton name="VSCode" service={getServiceUrl("code")} onClick={(service: Service) => setService(service)}/>
         </div>
       </div>
     </div>
